@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JsonRPC;
 using KerioConnect.Entities;
 using Newtonsoft.Json.Linq;
@@ -143,6 +144,19 @@ namespace KerioConnect
             var request = this.client.NewRequest("Occurrences.remove", JToken.FromObject(new
             {
                 occurrences = calendarEventOccurrences
+            }));
+
+            return this.client.Rpc(request);
+        }
+
+        public GenericResponse MoveMailMessages(IList<string> sourceMailMessageGuidPath, string destinationMailGuidSubdirectory)
+        {
+            var ids = sourceMailMessageGuidPath.Select(x => $"keriostorage://mail/{x}").ToList();
+
+            var request = this.client.NewRequest("Mails.move", JToken.FromObject(new
+            {
+                folder = $"keriostorage://folder/${destinationMailGuidSubdirectory}",
+                ids
             }));
 
             return this.client.Rpc(request);
